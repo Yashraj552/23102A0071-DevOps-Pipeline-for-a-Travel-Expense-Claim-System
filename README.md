@@ -41,3 +41,9 @@ See the docs folder for problem scope, backlog, SRS and architecture.
 
 ## Author
 Yashraj Patil (23102A0071)
+## Routes
+- `GET /` home page
+- `GET /claims` list of claims
+- `GET /claims/new` claim form
+- `POST /claims` submit a claim
+- `GET /claims/{id}` claim details

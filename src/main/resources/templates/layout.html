@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title}">Travel Expense Claim System</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+</head>
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand navbar-dark bg-primary mb-4">
+  <div class="container">
+    <a class="navbar-brand" id="nav-title" th:href="@{/}">Travel Expense Claims</a>
+    <ul class="navbar-nav">
+      <li class="nav-item"><a class="nav-link" id="nav-home" th:href="@{/}">Home</a></li>
+      <li class="nav-item"><a class="nav-link" id="nav-new-claim" th:href="@{/claims/new}">New Claim</a></li>
+      <li class="nav-item"><a class="nav-link" id="nav-claims" th:href="@{/claims}">My Claims</a></li>
+    </ul>
+  </div>
+</nav>
+</body>
+</html>
