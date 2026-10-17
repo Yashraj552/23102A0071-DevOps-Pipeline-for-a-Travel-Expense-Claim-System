@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: head('My Claims')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+<main class="container">
+  <h1 class="h3 mb-3" id="page-title">My Claims</h1>
+  <div class="alert alert-success" id="flash-message" th:if="${message}" th:text="${message}"></div>
+  <table class="table table-striped" id="claims-table" th:if="${!claims.isEmpty()}">
+    <thead>
+      <tr><th>ID</th><th>Employee</th><th>Destination</th><th>Amount</th><th>Travel date</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="c : ${claims}">
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.employeeName}"></td>
+        <td th:text="${c.destination}"></td>
+        <td th:text="${c.amount}"></td>
+        <td th:text="${c.travelDate}"></td>
+        <td><span class="badge bg-secondary" th:text="${c.status}"></span></td>
+        <td><a th:href="@{/claims/{id}(id=${c.id})}">View</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <p id="no-claims" th:if="${claims.isEmpty()}">No claims submitted yet.</p>
+</main>
+</body>
+</html>

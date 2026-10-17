@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{layout :: head('Claim Details')}"></head>
+<body>
+<nav th:replace="~{layout :: navbar}"></nav>
+<main class="container">
+  <h1 class="h3 mb-3" id="page-title">Claim Details</h1>
+  <dl class="row card card-body">
+    <dt class="col-sm-3">Claim ID</dt><dd class="col-sm-9" id="claim-id" th:text="${claim.id}"></dd>
+    <dt class="col-sm-3">Employee</dt><dd class="col-sm-9" th:text="${claim.employeeName}"></dd>
+    <dt class="col-sm-3">Destination</dt><dd class="col-sm-9" th:text="${claim.destination}"></dd>
+    <dt class="col-sm-3">Purpose</dt><dd class="col-sm-9" th:text="${claim.purpose}"></dd>
+    <dt class="col-sm-3">Amount</dt><dd class="col-sm-9" th:text="${claim.amount}"></dd>
+    <dt class="col-sm-3">Travel date</dt><dd class="col-sm-9" th:text="${claim.travelDate}"></dd>
+    <dt class="col-sm-3">Status</dt><dd class="col-sm-9" id="claim-status" th:text="${claim.status}"></dd>
+    <dt class="col-sm-3">Submitted at</dt><dd class="col-sm-9" th:text="${#temporals.format(claim.createdAt, 'dd MMM yyyy HH:mm')}"></dd>
+  </dl>
+  <a class="btn btn-secondary" id="back-to-claims" th:href="@{/claims}">Back to claims</a>
+</main>
+</body>
+</html>
