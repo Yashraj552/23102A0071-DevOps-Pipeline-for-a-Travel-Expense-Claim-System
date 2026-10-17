@@ -29,7 +29,7 @@ src/        application source and tests
 ## Branch policy
 - main: stable and tagged, no direct commits
 - develop: integration branch
-- feature/<name>, bugfix/<name>: short-lived working branches
+- `feature/<name>`, `bugfix/<name>`: short-lived working branches
 
 Details: [docs/04-branch-policy.md](docs/04-branch-policy.md)
 

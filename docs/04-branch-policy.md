@@ -5,9 +5,9 @@
 |---|---|---|
 | main | Stable, tagged releases | No direct commits. Merge from develop only. |
 | develop | Integration of finished features | Merge feature branches through pull requests. |
-| feature/<name> | New functionality | Branch from develop, e.g. feature/claim-submission |
-| bugfix/<name> | Defect fixes | Branch from develop, e.g. bugfix/amount-validation |
-| hotfix/<name> | Urgent fix on main | Merge to main and develop |
+| `feature/<name>` | New functionality | Branch from develop, e.g. feature/claim-submission |
+| `bugfix/<name>` | Defect fixes | Branch from develop, e.g. bugfix/amount-validation |
+| `hotfix/<name>` | Urgent fix on main | Merge to main and develop |
 
 ## Naming rules
 Lowercase, words separated by hyphens, short and descriptive.
