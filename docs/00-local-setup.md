@@ -19,7 +19,7 @@ Check http://localhost:8082/actuator/health returns `{"status":"UP"}`.
 
 Also test the packaged artifact:
 ```bash
-java -jar target/travel-expense-claim-system-0.0.1-SNAPSHOT.war
+java -jar target/travel-expense-claim-system-1.0.0.war
 ```
 
 ## Screenshots to capture (save in docs/screenshots/)

@@ -10,7 +10,7 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("appName", "Travel Expense Claim System");
-        model.addAttribute("version", "0.0.1-SNAPSHOT");
+        model.addAttribute("version", "1.0.0");
         return "index";
     }
 }
