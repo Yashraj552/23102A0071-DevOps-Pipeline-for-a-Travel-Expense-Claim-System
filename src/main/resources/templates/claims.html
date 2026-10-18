@@ -6,18 +6,24 @@
 <main class="container">
   <h1 class="h3 mb-3" id="page-title">My Claims</h1>
   <div class="alert alert-success" id="flash-message" th:if="${message}" th:text="${message}"></div>
+  <div class="row mb-3">
+    <div class="col"><div class="card card-body text-center"><div class="h4 mb-0" id="count-submitted" th:text="${submittedCount}">0</div><div>Submitted</div></div></div>
+    <div class="col"><div class="card card-body text-center"><div class="h4 mb-0" id="count-approved" th:text="${approvedCount}">0</div><div>Approved</div></div></div>
+    <div class="col"><div class="card card-body text-center"><div class="h4 mb-0" id="count-rejected" th:text="${rejectedCount}">0</div><div>Rejected</div></div></div>
+  </div>
   <table class="table table-striped" id="claims-table" th:if="${!claims.isEmpty()}">
     <thead>
-      <tr><th>ID</th><th>Employee</th><th>Destination</th><th>Amount</th><th>Travel date</th><th>Status</th><th></th></tr>
+      <tr><th>ID</th><th>Destination</th><th>Amount</th><th>Travel date</th><th>Status</th><th>Reviewer comment</th><th></th></tr>
     </thead>
     <tbody>
       <tr th:each="c : ${claims}">
         <td th:text="${c.id}"></td>
-        <td th:text="${c.employeeName}"></td>
         <td th:text="${c.destination}"></td>
         <td th:text="${c.amount}"></td>
         <td th:text="${c.travelDate}"></td>
-        <td><span class="badge bg-secondary" th:text="${c.status}"></span></td>
+        <td><span class="badge" th:text="${c.status}"
+              th:classappend="${c.status.name() == 'APPROVED' ? 'bg-success' : (c.status.name() == 'REJECTED' ? 'bg-danger' : 'bg-warning text-dark')}"></span></td>
+        <td th:text="${c.reviewerComment}"></td>
         <td><a th:href="@{/claims/{id}(id=${c.id})}">View</a></td>
       </tr>
     </tbody>
