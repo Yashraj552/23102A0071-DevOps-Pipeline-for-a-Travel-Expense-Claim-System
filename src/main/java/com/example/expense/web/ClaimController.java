@@ -2,6 +2,7 @@ package com.example.expense.web;
 
 import com.example.expense.model.Claim;
 import com.example.expense.service.ClaimService;
+import java.security.Principal;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,8 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/claims")
@@ -36,8 +37,10 @@ public class ClaimController {
     }
 
     @PostMapping
-    public String submit(@ModelAttribute ClaimForm claimForm, RedirectAttributes redirectAttributes) {
-        claimService.submit(claimForm);
+    public String submit(@ModelAttribute ClaimForm claimForm, Principal principal,
+                         RedirectAttributes redirectAttributes) {
+        // Receipt upload and validation are added on feature/validation-receipts.
+        claimService.submit(claimForm, principal.getName(), null);
         redirectAttributes.addFlashAttribute("message", "Claim submitted successfully");
         return "redirect:/claims";
     }
