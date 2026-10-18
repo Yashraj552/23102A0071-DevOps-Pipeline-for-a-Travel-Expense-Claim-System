@@ -36,6 +36,10 @@ public class ClaimService {
         return claimRepository.findAllByOrderByCreatedAtDesc();
     }
 
+    public List<Claim> findByEmployee(String employeeName) {
+        return claimRepository.findByEmployeeNameOrderByCreatedAtDesc(employeeName);
+    }
+
     public List<Claim> findPending() {
         return claimRepository.findByStatusOrderByCreatedAtDesc(ClaimStatus.SUBMITTED);
     }
