@@ -82,3 +82,27 @@ flowchart LR
     DK --> AN[Ansible deploy]
     AN --> HC[Health check]
 ```
+
+## 6. Backlog Status After Task 6 (MVP Completion)
+
+| ID | Item | Task | Status |
+|---|---|---|---|
+| B-01 | Project skeleton and local setup | 3 | Done |
+| B-02 | Repository, README, templates, branch policy | 4 | Done |
+| B-03 | Claim entity, form and submission | 5 | Done |
+| B-04 | Claim and receipt validation | 6 | Done |
+| B-05 | Login and roles | 6 | Done |
+| B-06 | Reviewer pending list and details | 6 | Done |
+| B-07 | Approve and reject with comment | 6 | Done |
+| B-08 | My Claims status tracking | 6 | Done |
+| B-09 | Jenkins CI job with archived artefact | 7 | To do |
+| B-10 | Jenkinsfile and Tomcat deployment | 8 | To do |
+| B-11 | Selenium test suite | 9 | To do |
+| B-12 | Selenium quality gate in Jenkins | 10 | To do |
+| B-13 | Dockerfile and container lifecycle | 11 | To do |
+| B-14 | Jenkins-Docker continuous deployment | 12 | To do |
+| B-15 | Ansible playbook | 13 | To do |
+| B-16 | Provisioning, idempotency, health check, rollback | 14 | To do |
+| B-17 | Final report, demo and viva | 15 | To do |
+
+Stories US-01 to US-08 are implemented in release v1.0.0. US-09 and US-10 belong to the pipeline tasks (7 to 14).
