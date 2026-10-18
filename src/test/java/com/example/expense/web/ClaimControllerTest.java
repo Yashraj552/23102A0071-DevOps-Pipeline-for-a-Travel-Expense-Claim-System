@@ -1,6 +1,8 @@
 package com.example.expense.web;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -22,7 +24,7 @@ class ClaimControllerTest {
 
     @Test
     void claimFormPageLoads() throws Exception {
-        mockMvc.perform(get("/claims/new"))
+        mockMvc.perform(get("/claims/new").with(user("employee").roles("EMPLOYEE")))
                .andExpect(status().isOk())
                .andExpect(content().string(containsString("Submit a Travel Expense Claim")));
     }
@@ -30,7 +32,8 @@ class ClaimControllerTest {
     @Test
     void submittedClaimAppearsInList() throws Exception {
         mockMvc.perform(post("/claims")
-                .param("employeeName", "Asha Rao")
+                .with(csrf())
+                .with(user("employee").roles("EMPLOYEE"))
                 .param("destination", "Pune Conference")
                 .param("purpose", "Client meeting")
                 .param("amount", "2500.00")
@@ -38,7 +41,7 @@ class ClaimControllerTest {
                .andExpect(status().is3xxRedirection())
                .andExpect(redirectedUrl("/claims"));
 
-        mockMvc.perform(get("/claims"))
+        mockMvc.perform(get("/claims").with(user("employee").roles("EMPLOYEE")))
                .andExpect(status().isOk())
                .andExpect(content().string(containsString("Pune Conference")));
     }
