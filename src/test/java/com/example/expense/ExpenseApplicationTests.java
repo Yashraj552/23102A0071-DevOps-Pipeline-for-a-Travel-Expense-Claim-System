@@ -1,5 +1,7 @@
 package com.example.expense;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,9 +20,9 @@ class ExpenseApplicationTests {
     private MockMvc mockMvc;
 
     @Test
-    void homePageLoads() throws Exception {
-        mockMvc.perform(get("/"))
+    void homePageLoadsForLoggedInUser() throws Exception {
+        mockMvc.perform(get("/").with(user("employee").roles("EMPLOYEE")))
                .andExpect(status().isOk())
-               .andExpect(content().string(org.hamcrest.Matchers.containsString("Travel Expense Claim System")));
+               .andExpect(content().string(containsString("Travel Expense Claim System")));
     }
 }

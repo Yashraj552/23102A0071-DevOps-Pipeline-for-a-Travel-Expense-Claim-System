@@ -29,7 +29,7 @@ src/        application source and tests
 ## Branch policy
 - main: stable and tagged, no direct commits
 - develop: integration branch
-- feature/<name>, bugfix/<name>: short-lived working branches
+- `feature/<name>`, `bugfix/<name>`: short-lived working branches
 
 Details: [docs/04-branch-policy.md](docs/04-branch-policy.md)
 
@@ -41,3 +41,9 @@ See the docs folder for problem scope, backlog, SRS and architecture.
 
 ## Author
 Yashraj Patil (23102A0071)
+## Routes
+- `GET /` home page
+- `GET /claims` list of claims
+- `GET /claims/new` claim form
+- `POST /claims` submit a claim
+- `GET /claims/{id}` claim details
