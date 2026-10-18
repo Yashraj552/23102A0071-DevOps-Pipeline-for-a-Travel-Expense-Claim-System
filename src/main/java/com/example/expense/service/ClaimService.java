@@ -7,6 +7,7 @@ import com.example.expense.web.ClaimForm;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ClaimService {
@@ -17,13 +18,15 @@ public class ClaimService {
         this.claimRepository = claimRepository;
     }
 
-    public Claim submit(ClaimForm form) {
+    @Transactional
+    public Claim submit(ClaimForm form, String employeeName, String receiptPath) {
         Claim claim = new Claim();
-        claim.setEmployeeName(form.getEmployeeName());
+        claim.setEmployeeName(employeeName);
         claim.setDestination(form.getDestination());
         claim.setPurpose(form.getPurpose());
         claim.setAmount(form.getAmount());
         claim.setTravelDate(form.getTravelDate());
+        claim.setReceiptPath(receiptPath);
         claim.setStatus(ClaimStatus.SUBMITTED);
         return claimRepository.save(claim);
     }
