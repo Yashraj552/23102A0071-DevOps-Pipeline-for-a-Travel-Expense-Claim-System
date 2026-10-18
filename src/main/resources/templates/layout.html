@@ -9,7 +9,7 @@
 <body>
 <nav th:fragment="navbar" class="navbar navbar-expand navbar-dark bg-primary mb-4">
   <div class="container">
-    <a class="navbar-brand" id="nav-title" th:href="@{/}">Travel Expense Claims</a>
+    <a class="navbar-brand" id="nav-title" th:href="@{/}">Expense Claims</a>
     <ul class="navbar-nav me-auto" sec:authorize="isAuthenticated()">
       <li class="nav-item"><a class="nav-link" id="nav-home" th:href="@{/}">Home</a></li>
       <li class="nav-item" sec:authorize="hasRole('EMPLOYEE')"><a class="nav-link" id="nav-new-claim" th:href="@{/claims/new}">New Claim</a></li>
