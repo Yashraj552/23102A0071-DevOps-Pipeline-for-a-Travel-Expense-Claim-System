@@ -1,11 +1,13 @@
 package com.example.expense.web;
 
 import com.example.expense.model.Claim;
+import com.example.expense.model.ClaimStatus;
 import com.example.expense.service.ClaimService;
 import com.example.expense.service.ReceiptStorageService;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,8 +35,12 @@ public class ClaimController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("claims", claimService.findAll());
+    public String list(Principal principal, Model model) {
+        List<Claim> claims = claimService.findByEmployee(principal.getName());
+        model.addAttribute("claims", claims);
+        model.addAttribute("submittedCount", count(claims, ClaimStatus.SUBMITTED));
+        model.addAttribute("approvedCount", count(claims, ClaimStatus.APPROVED));
+        model.addAttribute("rejectedCount", count(claims, ClaimStatus.REJECTED));
         return "claims";
     }
 
@@ -65,10 +71,17 @@ public class ClaimController {
     }
 
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id, Model model) {
+    public String detail(@PathVariable Long id, Principal principal, Model model) {
         Claim claim = claimService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Claim not found"));
+        if (!claim.getEmployeeName().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "This claim belongs to another employee");
+        }
         model.addAttribute("claim", claim);
         return "claim-detail";
+    }
+
+    private static long count(List<Claim> claims, ClaimStatus status) {
+        return claims.stream().filter(c -> c.getStatus() == status).count();
     }
 }

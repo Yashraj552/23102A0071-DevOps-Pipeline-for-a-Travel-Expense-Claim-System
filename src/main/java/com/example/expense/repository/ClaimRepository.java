@@ -9,5 +9,7 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
 
     List<Claim> findAllByOrderByCreatedAtDesc();
 
+    List<Claim> findByEmployeeNameOrderByCreatedAtDesc(String employeeName);
+
     List<Claim> findByStatusOrderByCreatedAtDesc(ClaimStatus status);
 }
