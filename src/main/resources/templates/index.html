@@ -8,7 +8,8 @@
     <h1 class="h3" id="app-title" th:text="${appName}">Travel Expense Claim System</h1>
     <p>Submit, review and track travel expense claims.</p>
     <p>Signed in as <strong id="current-user" sec:authentication="name">user</strong></p>
-    <p>Version: <span id="app-version" th:text="${version}">0.0.1</span></p>
+    <p>Version: <span id="app-version" th:text="${version}">1.0.0</span></p>
+    <p>Environment: <strong id="app-environment" th:text="${environment}">local</strong></p>
     <div sec:authorize="hasRole('EMPLOYEE')">
       <a class="btn btn-primary me-2" id="btn-new-claim" th:href="@{/claims/new}">Submit a new claim</a>
       <a class="btn btn-outline-primary" id="btn-my-claims" th:href="@{/claims}">My claims</a>
