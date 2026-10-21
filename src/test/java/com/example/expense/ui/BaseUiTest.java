@@ -41,6 +41,10 @@ public abstract class BaseUiTest {
             options.addArguments("--headless=new");
         }
         options.addArguments("--window-size=1366,900");
+        if (Boolean.parseBoolean(System.getProperty("NO_SANDBOX", "false"))) {
+            // Needed on some CI machines, for example when Chrome runs under a service account.
+            options.addArguments("--no-sandbox", "--disable-gpu");
+        }
         // Switch off Chrome's password manager and the "password found in a data breach" popup,
         // because the demo password is a well-known one and the popup would block clicks.
         java.util.Map<String, Object> prefs = new java.util.HashMap<>();
