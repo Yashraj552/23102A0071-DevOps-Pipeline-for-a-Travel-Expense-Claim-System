@@ -7,15 +7,17 @@ pipeline {
     }
 
     options {
-        buildDiscarder(logRotator(numToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '10'))
         disableConcurrentBuilds()
+        timeout(time: 20, unit: 'MINUTES')
     }
 
     environment {
-        JAVA_HOME  = 'C:\\Program Files\\Java\\jdk-21'
-        MVN        = 'C:\\DevTools\\apache-maven-3.9.16\\bin\\mvn.cmd'
-        TOMCAT_URL = 'http://localhost:8081'
-        TARGET_ENV = "${params.ENV ?: 'dev'}"
+        JAVA_HOME    = 'C:\\Program Files\\Java\\jdk-21'
+        MVN          = 'C:\\DevTools\\apache-maven-3.9.16\\bin\\mvn.cmd'
+        TOMCAT_URL   = 'http://localhost:8081'
+        UI_TEST_PORT = '8083'
+        TARGET_ENV   = "${params.ENV ?: 'dev'}"
     }
 
     stages {
@@ -38,6 +40,12 @@ pipeline {
             steps {
                 bat 'call "%MVN%" -B -Dapp.environment=%TARGET_ENV% package'
                 archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+            }
+        }
+
+        stage('UI Tests') {
+            steps {
+                bat 'powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\run-ui-tests.ps1 -Port %UI_TEST_PORT% -Mvn "%MVN%"'
             }
         }
 
@@ -79,11 +87,15 @@ pipeline {
     }
 
     post {
+        always {
+            junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
+            archiveArtifacts artifacts: 'target/screenshots/**,target/ui-test-app.log*', allowEmptyArchive: true
+        }
         success {
             echo "Deployed to ${env.TOMCAT_URL}/expense-${env.TARGET_ENV}/"
         }
         failure {
-            echo 'Pipeline failed. See the console output of the failing stage.'
+            echo 'Pipeline failed. See the console output of the failing stage. Deployment is skipped when tests fail.'
         }
     }
 }
