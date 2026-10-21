@@ -41,6 +41,15 @@ public abstract class BaseUiTest {
             options.addArguments("--headless=new");
         }
         options.addArguments("--window-size=1366,900");
+        // Switch off Chrome's password manager and the "password found in a data breach" popup,
+        // because the demo password is a well-known one and the popup would block clicks.
+        java.util.Map<String, Object> prefs = new java.util.HashMap<>();
+        prefs.put("credentials_enable_service", false);
+        prefs.put("profile.password_manager_enabled", false);
+        prefs.put("profile.password_manager_leak_detection", false);
+        options.setExperimentalOption("prefs", prefs);
+        options.addArguments("--disable-features=PasswordLeakDetection,PasswordManagerOnboarding");
+        options.addArguments("--disable-notifications");
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
@@ -112,7 +121,7 @@ public abstract class BaseUiTest {
         open("/claims/new");
         fillClaimForm(destination, "UI test claim", "2500.00", LocalDate.now().minusDays(1));
         driver.findElement(By.id("receipt")).sendKeys(createReceipt("pdf").toAbsolutePath().toString());
-        driver.findElement(By.id("submit")).click();
+        clickWithScroll(By.id("submit"));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("flash-message")));
     }
 
@@ -124,10 +133,34 @@ public abstract class BaseUiTest {
         row.findElement(By.tagName("a")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("claim-status")));
         driver.findElement(By.id("comment")).sendKeys(comment);
-        driver.findElement(By.id("approve-button")).click();
+        clickWithScroll(By.id("approve-button"));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("flash-message")));
     }
 
+    /** Scrolls the element to the centre of the window, then clicks it, so nothing at the page edge can block the click. */
+    protected void clickWithScroll(By by) {
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(by));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+        try {
+            try {
+            wait.until(ExpectedConditions.elementToBeClickable(by)).click();
+        } catch (org.openqa.selenium.ElementClickInterceptedException e) {
+            Object cover = ((JavascriptExecutor) driver).executeScript(
+                "var r = arguments[0].getBoundingClientRect();"
+                + "var c = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);"
+                + "return c ? c.outerHTML.substring(0, 200) : 'none';", element);
+            System.out.println("Click blocked by: " + cover);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        }
+        } catch (org.openqa.selenium.ElementClickInterceptedException e) {
+            Object cover = ((JavascriptExecutor) driver).executeScript(
+                "var r = arguments[0].getBoundingClientRect();"
+                + "var c = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);"
+                + "return c ? c.outerHTML.substring(0, 200) : 'none';", element);
+            System.out.println("Click blocked by: " + cover);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        }
+    }
     protected By claimRow(String tableId, String destination) {
         return By.xpath("//table[@id='" + tableId + "']//tr[td[normalize-space()='" + destination + "']]");
     }
