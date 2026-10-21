@@ -20,6 +20,7 @@
 
   <properties>
     <java.version>17</java.version>
+    <excludedGroups>ui</excludedGroups>
     <app.environment>local</app.environment>
   </properties>
 
@@ -78,6 +79,11 @@
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -88,4 +94,13 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>selenium</id>
+      <properties>
+        <groups>ui</groups>
+        <excludedGroups>none</excludedGroups>
+      </properties>
+    </profile>
+  </profiles>
 </project>
