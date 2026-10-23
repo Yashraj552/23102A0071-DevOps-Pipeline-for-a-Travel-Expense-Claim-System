@@ -60,13 +60,13 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat \'\'\'
+                bat '''
                     @echo off
                     docker version --format "Docker server version: {{.Server.Version}}"
                     if errorlevel 1 exit /b 1
                     call "%MVN%" -q -B -DforceStdout help:evaluate -Dexpression=project.version > target\\version.txt
                     if errorlevel 1 exit /b 1
-                \'\'\'
+                '''
                 script {
                     def version = readFile('target/version.txt').trim()
                     if (!version || version.contains(' ') || version.contains('\n')) {
@@ -84,7 +84,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
                                                   usernameVariable: 'DOCKERHUB_USER',
                                                   passwordVariable: 'DOCKERHUB_TOKEN')]) {
-                    bat \'\'\'
+                    bat '''
                         @echo off
                         echo %DOCKERHUB_TOKEN%| docker login -u %DOCKERHUB_USER% --password-stdin
                         if errorlevel 1 exit /b 1
@@ -96,7 +96,7 @@ pipeline {
                         if "%RESULT%"=="0" set "RESULT=%errorlevel%"
                         docker logout
                         exit /b %RESULT%
-                    \'\'\'
+                    '''
                 }
             }
         }
@@ -106,7 +106,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
                                                   usernameVariable: 'DOCKERHUB_USER',
                                                   passwordVariable: 'DOCKERHUB_TOKEN')]) {
-                    bat \'\'\'
+                    bat '''
                         @echo off
                         set "IMAGE=%DOCKERHUB_USER%/expense-app:%IMAGE_TAG%"
                         docker pull %IMAGE%
@@ -116,14 +116,14 @@ pipeline {
                         docker run -d --name expense --restart unless-stopped -p %APP_PORT%:8082 -v expense-data:/app/data -v expense-uploads:/app/uploads %IMAGE%
                         if errorlevel 1 exit /b 1
                         docker ps --filter name=expense
-                    \'\'\'
+                    '''
                 }
             }
         }
 
         stage('Verify Container') {
             steps {
-                bat \'\'\'
+                bat '''
                     @echo off
                     curl --fail --silent --show-error --retry 20 --retry-delay 5 --retry-connrefused --retry-all-errors --max-time 5 "http://localhost:%APP_PORT%/actuator/health"
                     if errorlevel 1 (
@@ -133,7 +133,7 @@ pipeline {
                     echo.
                     docker ps --filter name=expense
                     echo Application URL: http://localhost:%APP_PORT%/
-                \'\'\'
+                '''
             }
         }
 
@@ -143,7 +143,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'tomcat-creds',
                                                   usernameVariable: 'TOMCAT_USER',
                                                   passwordVariable: 'TOMCAT_PASS')]) {
-                    bat \'\'\'
+                    bat '''
                         @echo off
                         set "WAR="
                         for %%f in (target\\*.war) do set "WAR=%%f"
@@ -157,7 +157,7 @@ pipeline {
                         type deploy-result.txt
                         findstr /B /C:"OK - " deploy-result.txt
                         if errorlevel 1 exit /b 1
-                    \'\'\'
+                    '''
                 }
             }
         }
@@ -165,13 +165,13 @@ pipeline {
         stage('Verify Tomcat') {
             when { expression { params.DEPLOY_TOMCAT } }
             steps {
-                bat \'\'\'
+                bat '''
                     @echo off
                     curl --fail --silent --show-error --retry 5 --retry-delay 3 --retry-connrefused "%TOMCAT_URL%/expense-%TARGET_ENV%/actuator/health"
                     if errorlevel 1 exit /b 1
                     echo.
                     echo Application URL: %TOMCAT_URL%/expense-%TARGET_ENV%/
-                \'\'\'
+                '''
             }
         }
     }
