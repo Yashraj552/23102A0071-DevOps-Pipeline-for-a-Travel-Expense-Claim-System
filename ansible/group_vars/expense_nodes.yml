@@ -31,3 +31,7 @@ configure_firewall: false
 
 # Health check
 health_url: "http://localhost:{{ app_port }}/actuator/health"
+
+# Deployment checks (deploy.yml)
+deploy_check_timeout: 60
+deploy_check_retries: 15
