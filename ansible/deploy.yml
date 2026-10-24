@@ -1,0 +1,140 @@
+---
+# Deploys a release and rolls back automatically if the health check fails.
+# Usage: ansible-playbook -i inventory.ini deploy.yml -K -e release_version=<version> -e release_src=<file on the control node>
+- name: Deploy a release with automatic rollback
+  hosts: expense_nodes
+  become: true
+
+  pre_tasks:
+    - name: Check that the release variables are set
+      ansible.builtin.assert:
+        that:
+          - release_version is defined
+          - release_src is defined
+        fail_msg: "Pass -e release_version=<version> -e release_src=<path of the file on the control node>"
+
+    - name: Check that the release file exists on the control node
+      ansible.builtin.stat:
+        path: "{{ release_src }}"
+      delegate_to: localhost
+      become: false
+      register: release_file
+
+    - name: Stop if the release file is missing
+      ansible.builtin.assert:
+        that: release_file.stat.exists
+        fail_msg: "Release file not found: {{ release_src }}"
+
+    - name: Read the active release
+      ansible.builtin.stat:
+        path: "{{ app_current_link }}"
+        follow: false
+      register: current_link
+
+    - name: Stop if there is no active release to roll back to
+      ansible.builtin.assert:
+        that: current_link.stat.islnk | default(false)
+        fail_msg: "There is no active release. Provision the node with site.yml first."
+
+    - name: Remember the previous release
+      ansible.builtin.set_fact:
+        previous_release: "{{ current_link.stat.lnk_target }}"
+
+    - name: Show the plan
+      ansible.builtin.debug:
+        msg: "Deploying {{ release_version }}. Previous release: {{ previous_release }}"
+
+  tasks:
+    - name: Deploy the new release and check it
+      block:
+        - name: Create the release folder
+          ansible.builtin.file:
+            path: "{{ app_releases_dir }}/{{ release_version }}"
+            state: directory
+            owner: root
+            group: root
+            mode: "0755"
+
+        - name: Copy the release file
+          ansible.builtin.copy:
+            src: "{{ release_src }}"
+            dest: "{{ app_releases_dir }}/{{ release_version }}/app.war"
+            owner: root
+            group: root
+            mode: "0644"
+
+        - name: Point the current link to the new release
+          ansible.builtin.file:
+            src: "{{ app_releases_dir }}/{{ release_version }}"
+            dest: "{{ app_current_link }}"
+            state: link
+
+        - name: Restart the application
+          ansible.builtin.systemd:
+            name: expense
+            state: restarted
+
+        - name: Wait until the application port is open
+          ansible.builtin.wait_for:
+            host: 127.0.0.1
+            port: "{{ app_port }}"
+            timeout: "{{ deploy_check_timeout }}"
+
+        - name: Call the health endpoint
+          ansible.builtin.uri:
+            url: "{{ health_url }}"
+            return_content: true
+          register: new_health
+          until: new_health.status == 200
+          retries: "{{ deploy_check_retries }}"
+          delay: 3
+
+        - name: Report the successful deployment
+          ansible.builtin.debug:
+            msg: "Release {{ release_version }} is deployed and healthy"
+
+      rescue:
+        - name: Report the failure
+          ansible.builtin.debug:
+            msg: "Health check failed ({{ ansible_failed_task.name }}). Rolling back to {{ previous_release }}"
+
+        - name: Point the current link back to the previous release
+          ansible.builtin.file:
+            src: "{{ previous_release }}"
+            dest: "{{ app_current_link }}"
+            state: link
+
+        - name: Restart the application with the previous release
+          ansible.builtin.systemd:
+            name: expense
+            state: restarted
+
+        - name: Wait until the application port is open again
+          ansible.builtin.wait_for:
+            host: 127.0.0.1
+            port: "{{ app_port }}"
+            timeout: "{{ deploy_check_timeout }}"
+
+        - name: Call the health endpoint again
+          ansible.builtin.uri:
+            url: "{{ health_url }}"
+            return_content: true
+          register: rollback_health
+          until: rollback_health.status == 200
+          retries: "{{ deploy_check_retries }}"
+          delay: 3
+
+        - name: Report the rollback
+          ansible.builtin.debug:
+            msg: "ROLLED BACK to {{ previous_release }}. The failed release {{ release_version }} stays in {{ app_releases_dir }} for analysis."
+
+  post_tasks:
+    - name: Read the active release
+      ansible.builtin.stat:
+        path: "{{ app_current_link }}"
+        follow: false
+      register: final_link
+
+    - name: Show the active release
+      ansible.builtin.debug:
+        msg: "Active release: {{ final_link.stat.lnk_target }}"
