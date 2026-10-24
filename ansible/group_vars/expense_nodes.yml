@@ -1,0 +1,33 @@
+---
+# Application
+app_name: expense
+app_user: expense
+app_group: expense
+app_port: 8085
+app_environment: node
+app_version: "1.0.0"
+
+# Release file on the control node (the Windows project folder, seen from WSL)
+app_war_src: "/mnt/c/Users/Yashraj/Desktop/travel-expense-claim-system/target/travel-expense-claim-system-{{ app_version }}.war"
+
+# Folders and files on the node
+app_home: /opt/expense
+app_releases_dir: /opt/expense/releases
+app_current_link: /opt/expense/current
+app_config_dir: /etc/expense
+app_data_dir: /var/lib/expense
+app_upload_dir: /var/lib/expense/uploads
+app_log_dir: /var/log/expense
+
+# Packages
+java_package: openjdk-17-jre-headless
+base_packages:
+  - curl
+  - ca-certificates
+required_packages: "{{ [java_package] + base_packages + (['ufw'] if configure_firewall | bool else []) }}"
+
+# Firewall: off by default (WSL has no meaningful firewall), switch on for a real server
+configure_firewall: false
+
+# Health check
+health_url: "http://localhost:{{ app_port }}/actuator/health"
