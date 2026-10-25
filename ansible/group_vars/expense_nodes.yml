@@ -5,7 +5,7 @@ app_user: expense
 app_group: expense
 app_port: 8085
 app_environment: node
-app_version: "1.0.0"
+app_version: "1.1.0"
 
 # Release file on the control node (the Windows project folder, seen from WSL)
 app_war_src: "/mnt/c/Users/Yashraj/Desktop/travel-expense-claim-system/target/travel-expense-claim-system-{{ app_version }}.war"
