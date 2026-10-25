@@ -1,0 +1,55 @@
+2026-10-25 17:28:55,529 p=12583 u=yashraj n=ansible | PLAY [Configure the node for the Travel Expense Claim System] ************************************************************
+2026-10-25 17:28:55,563 p=12583 u=yashraj n=ansible | TASK [Gathering Facts] ***************************************************************************************************
+2026-10-25 17:28:56,649 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:28:56,660 p=12583 u=yashraj n=ansible | TASK [Check that systemd is the service manager] *************************************************************************
+2026-10-25 17:28:56,677 p=12583 u=yashraj n=ansible | ok: [expense-node] => {
+    "changed": false,
+    "msg": "systemd is running"
+}
+2026-10-25 17:28:56,689 p=12583 u=yashraj n=ansible | TASK [Check that the release file exists on the control node] ************************************************************
+2026-10-25 17:28:58,035 p=12583 u=yashraj n=ansible | ok: [expense-node -> localhost]
+2026-10-25 17:28:58,047 p=12583 u=yashraj n=ansible | TASK [Stop if the release file is missing] *******************************************************************************
+2026-10-25 17:28:58,067 p=12583 u=yashraj n=ansible | ok: [expense-node] => {
+    "changed": false,
+    "msg": "Release file found"
+}
+2026-10-25 17:28:58,095 p=12583 u=yashraj n=ansible | TASK [Install the required packages] *************************************************************************************
+2026-10-25 17:29:00,825 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:29:00,836 p=12583 u=yashraj n=ansible | TASK [Create the application group] **************************************************************************************
+2026-10-25 17:29:01,290 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:29:01,307 p=12583 u=yashraj n=ansible | TASK [Create the application user] ***************************************************************************************
+2026-10-25 17:29:01,781 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:29:01,792 p=12583 u=yashraj n=ansible | TASK [Create the application folders] ************************************************************************************
+2026-10-25 17:29:02,197 p=12583 u=yashraj n=ansible | ok: [expense-node] => (item=/opt/expense)
+2026-10-25 17:29:02,477 p=12583 u=yashraj n=ansible | ok: [expense-node] => (item=/opt/expense/releases)
+2026-10-25 17:29:02,733 p=12583 u=yashraj n=ansible | changed: [expense-node] => (item=/opt/expense/releases/1.1.0)
+2026-10-25 17:29:02,989 p=12583 u=yashraj n=ansible | ok: [expense-node] => (item=/etc/expense)
+2026-10-25 17:29:03,277 p=12583 u=yashraj n=ansible | ok: [expense-node] => (item=/var/lib/expense)
+2026-10-25 17:29:03,532 p=12583 u=yashraj n=ansible | ok: [expense-node] => (item=/var/lib/expense/data)
+2026-10-25 17:29:03,839 p=12583 u=yashraj n=ansible | ok: [expense-node] => (item=/var/lib/expense/uploads)
+2026-10-25 17:29:04,138 p=12583 u=yashraj n=ansible | ok: [expense-node] => (item=/var/log/expense)
+2026-10-25 17:29:04,153 p=12583 u=yashraj n=ansible | TASK [Install the environment file] **************************************************************************************
+2026-10-25 17:29:04,705 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:29:04,717 p=12583 u=yashraj n=ansible | TASK [Install the systemd unit] ******************************************************************************************
+2026-10-25 17:29:05,261 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:29:05,272 p=12583 u=yashraj n=ansible | TASK [Copy the release file to the node] *********************************************************************************
+2026-10-25 17:29:07,587 p=12583 u=yashraj n=ansible | changed: [expense-node]
+2026-10-25 17:29:07,598 p=12583 u=yashraj n=ansible | TASK [Point the current link to the release] *****************************************************************************
+2026-10-25 17:29:07,882 p=12583 u=yashraj n=ansible | changed: [expense-node]
+2026-10-25 17:29:07,892 p=12583 u=yashraj n=ansible | TASK [Allow the application port in the firewall] ************************************************************************
+2026-10-25 17:29:07,956 p=12583 u=yashraj n=ansible | skipping: [expense-node]
+2026-10-25 17:29:07,976 p=12583 u=yashraj n=ansible | TASK [Apply pending service changes] *************************************************************************************
+2026-10-25 17:29:08,004 p=12583 u=yashraj n=ansible | RUNNING HANDLER [Restart expense] ****************************************************************************************
+2026-10-25 17:29:09,821 p=12583 u=yashraj n=ansible | changed: [expense-node]
+2026-10-25 17:29:09,831 p=12583 u=yashraj n=ansible | TASK [Enable and start the application service] **************************************************************************
+2026-10-25 17:29:10,616 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:29:10,628 p=12583 u=yashraj n=ansible | TASK [Wait until the application port is open] ***************************************************************************
+2026-10-25 17:29:23,470 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:29:23,482 p=12583 u=yashraj n=ansible | TASK [Call the health endpoint] ******************************************************************************************
+2026-10-25 17:29:24,153 p=12583 u=yashraj n=ansible | ok: [expense-node]
+2026-10-25 17:29:24,163 p=12583 u=yashraj n=ansible | TASK [Show the health status] ********************************************************************************************
+2026-10-25 17:29:24,201 p=12583 u=yashraj n=ansible | ok: [expense-node] => {
+    "msg": "Health check: UP"
+}
+2026-10-25 17:29:24,241 p=12583 u=yashraj n=ansible | PLAY RECAP ***************************************************************************************************************
+2026-10-25 17:29:24,242 p=12583 u=yashraj n=ansible | expense-node               : ok=17   changed=4    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
