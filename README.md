@@ -1,57 +1,75 @@
 # Travel Expense Claim System
 
-A web application for submitting, reviewing and tracking travel expense claims, built to demonstrate a complete DevOps pipeline (Git, Jenkins, Selenium, Docker, Ansible).
+A web application for submitting, reviewing and tracking travel expense claims, with a complete DevOps pipeline: Git and GitHub, Jenkins, Selenium, Docker and Ansible.
 
-Current version: 1.0.0 (MVP)
+Releases: v1.0.0 (MVP) and v1.1.0 (final release).
 
-## Tech stack
-Java 17, Spring Boot 3.2.5, Spring Security, Maven, Thymeleaf, Bootstrap, H2, Tomcat, Jenkins, Selenium, Docker, Ansible
-
-## Features (MVP)
+## What it does
 - Login with two roles: Employee and Reviewer
-- Employees submit claims with destination, purpose, amount, travel date and a receipt
-- Data validation (amount above zero, travel date not in the future) and receipt validation (PDF, JPG or PNG, up to 2 MB)
-- Reviewers see pending claims, open the receipt, and approve or reject with a comment (comment required on reject)
-- Employees track their own claims: status (SUBMITTED, APPROVED, REJECTED), counts and reviewer comment
+- Employees submit claims with destination, purpose, amount, travel date and a receipt (PDF, JPG or PNG up to 2 MB)
+- The server validates the data: amount above zero, travel date not in the future
+- Reviewers see the pending claims, open the receipt and approve or reject with a comment
+- Employees track the status of their own claims: SUBMITTED, APPROVED or REJECTED
 
-## Demo accounts (for demonstration only)
-- employee / password123 (Employee)
-- employee2 / password123 (Employee)
-- reviewer / password123 (Reviewer)
+Demo accounts (for demonstration only): employee / password123, employee2 / password123, reviewer / password123
+
+## Architecture
+See [docs/13-architecture.md](docs/13-architecture.md) for the application and the delivery pipeline.
+
+Commit, then Jenkins (checkout, build, package with unit tests, Selenium quality gate, Docker build, push to Docker Hub, deploy a fresh container, verify), then Ansible provisions the node.
+
+## Technology
+Java 17, Spring Boot 3.2.5, Thymeleaf, Spring Security, Spring Data JPA, H2, Maven, JUnit 5, Selenium WebDriver, Jenkins, Docker, Docker Hub, Ansible, Ubuntu with systemd
+
+## Ports
+- 8080 Jenkins
+- 8081 Tomcat (optional deployment)
+- 8082 application (local run and Docker container)
+- 8083 application started by the UI test stage
+- 8085 application on the Ansible node
 
 ## Run locally
+
     mvn clean package
-    mvn spring-boot:run
+    java -jar target/travel-expense-claim-system-1.1.0.war
 
-App: http://localhost:8082 | Health: http://localhost:8082/actuator/health
+Open http://localhost:8082 and the health check at http://localhost:8082/actuator/health
 
-## Routes
-- `GET /login` login page
-- `GET /` home page (login required)
-- `GET /claims` My Claims (Employee)
-- `GET /claims/new` and `POST /claims` submit a claim (Employee)
-- `GET /claims/{id}` claim details (owner only)
-- `GET /review` pending claims (Reviewer)
-- `GET /review/{id}` review a claim (Reviewer)
-- `POST /review/{id}/approve` and `POST /review/{id}/reject` (Reviewer)
-- `GET /receipts/{claimId}` receipt file (owner or Reviewer)
-- `GET /actuator/health` health check (public)
+## Run with Docker
 
-## Project structure
-- docs: documentation and screenshots
-- ansible: configuration management
-- src: application source and tests
+    docker run -d --name expense -p 8082:8082 /expense-app:latest
+
+## Run the UI tests
+Start the application, then:
+
+    mvn test -Pselenium
+
+## Provision a node with Ansible
+In Ubuntu (WSL2) with systemd:
+
+    cd ansible
+    ansible-playbook -i inventory.ini site.yml -K
+    ansible-playbook -i inventory.ini health.yml -K
+
+More playbooks: reset.yml (clean state), deploy.yml (release with automatic rollback).
+
+## Repository structure
+- src: application and tests
+- Jenkinsfile, Dockerfile, scripts: pipeline, image and UI test script
+- ansible: inventory, playbooks, templates, execution logs
+- docs: documentation
 - .github: issue and pull request templates
 
+## Documentation
+- docs/01 problem and scope, docs/02 backlog and plan, docs/03 requirements and architecture
+- docs/04 branch policy
+- docs/05 Jenkins job, docs/06 pipeline and Tomcat, docs/07 test plan, docs/08 continuous testing
+- docs/09 Docker lifecycle, docs/10 Jenkins-Docker deployment
+- docs/11 configuration specification, docs/12 provisioning and reliability
+- docs/13 final architecture, docs/14 troubleshooting guide, docs/15 limitations and future work, docs/16 demo script
+
 ## Branch policy
-- main: stable and tagged, no direct commits
-- develop: integration branch
-- `feature/<name>`, `bugfix/<name>`: short-lived working branches
-
-Details: [docs/04-branch-policy.md](docs/04-branch-policy.md)
-
-## Commit convention
-feat, fix, docs, test, chore (format: `type: description`)
+main is stable and tagged, develop is the integration branch, feature and bugfix branches are short-lived and merged through pull requests. Details: [docs/04-branch-policy.md](docs/04-branch-policy.md)
 
 ## Author
 Yashraj Patil (23102A0071)
