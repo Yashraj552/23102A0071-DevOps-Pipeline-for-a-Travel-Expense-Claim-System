@@ -37,7 +37,7 @@ Open http://localhost:8082 and the health check at http://localhost:8082/actuato
 
 ## Run with Docker
 
-    docker run -d --name expense -p 8082:8082 /expense-app:latest
+    docker run -d --name expense -p 8082:8082 yashraj23102a0071/expense-app:latest
 
 ## Run the UI tests
 Start the application, then:
