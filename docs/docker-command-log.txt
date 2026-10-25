@@ -1,0 +1,76 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261023142658
+Username: YASHRAJ-LEGION\Yashraj
+RunAs User: YASHRAJ-LEGION\Yashraj
+Configuration Name: 
+Machine: YASHRAJ-LEGION (Microsoft Windows NT 10.0.26300.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\Yashraj\AppData\Local\Programs\Microsoft VS Code\e646868227\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 31824
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is C:\Users\Yashraj\Desktop\docker-command-log.txt
+]633;D;0 ]633;A ]633;P;Cwd=C:\x5cUsers\x5cYashraj\x5cDesktop\x5ctravel-expense-claim-system PS C:\Users\Yashraj\Desktop\travel-expense-claim-system> ]633;B 
+PS>docker run -d --name expense -p 8082:8082 expense-app:1.0.0
+docker ps
+docker port expense
+for ($i = 0; $i -lt 24; $i++) { $s = docker inspect --format '{{.State.Health.Status}}' expense; Write-Host $s; if ($s -eq 'healthy') { break }; Start-Sleep -Seconds 5 }
+docker ps
+curl.exe http://localhost:8082/actuator/health
+d6a136616dbbb200efa10f8b5d9cbf45e7b7b98ffb6b1408be521aec9f674d1f
+d6a136616dbb   expense-app:1.0.0   "java -XX:MaxRAMPerc…"   1 second ago   Up Less than a second (health: starting)   0.0.0.0:8082->8082/tcp, [::]:8082->8082/tcp
+expense
+
+starting
+starting
+healthy
+
+{"status":"UP"}
+]633;D;0 ]633;A ]633;P;Cwd=C:\x5cUsers\x5cYashraj\x5cDesktop\x5ctravel-expense-claim-system PS C:\Users\Yashraj\Desktop\travel-expense-claim-system> ]633;B 
+PS>docker logs --tail 40 expense
+docker inspect expense --format 'Status: {{.State.Status}} | Health: {{.State.Health.Status}} | Image: {{.Config.Image}} | Ports: {{json .NetworkSettings.Ports}}'
+docker exec expense whoami
+docker exec expense ls /app
+docker stats --no-stream
+
+
+
+
+
+]633;D;0 ]633;A ]633;P;Cwd=C:\x5cUsers\x5cYashraj\x5cDesktop\x5ctravel-expense-claim-system PS C:\Users\Yashraj\Desktop\travel-expense-claim-system> ]633;B 
+PS>docker stop expense
+docker ps -a --filter name=expense
+docker start expense
+docker restart expense
+docker ps
+docker logs --tail 10 expense
+
+
+
+
+
+
+]633;D;0 ]633;A ]633;P;Cwd=C:\x5cUsers\x5cYashraj\x5cDesktop\x5ctravel-expense-claim-system PS C:\Users\Yashraj\Desktop\travel-expense-claim-system> ]633;B 
+PS>docker stop expense
+docker rm expense
+docker ps -a --filter name=expense
+docker rmi expense-app:latest
+docker images expense-app
+
+
+
+
+
+]633;D;0 ]633;A ]633;P;Cwd=C:\x5cUsers\x5cYashraj\x5cDesktop\x5ctravel-expense-claim-system PS C:\Users\Yashraj\Desktop\travel-expense-claim-system> ]633;B 
+PS>Stop-Transcript
+**********************
+Windows PowerShell transcript end
+End time: 20261023144044
+**********************

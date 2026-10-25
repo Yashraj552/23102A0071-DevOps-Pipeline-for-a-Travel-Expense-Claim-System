@@ -1,0 +1,11 @@
+target
+data
+uploads
+.git
+.github
+.idea
+.vscode
+docs
+ansible
+scripts
+*.md

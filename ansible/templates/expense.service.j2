@@ -1,0 +1,21 @@
+# Managed by Ansible. Do not edit by hand.
+[Unit]
+Description=Travel Expense Claim System
+After=network.target
+
+[Service]
+Type=simple
+User={{ app_user }}
+Group={{ app_group }}
+WorkingDirectory={{ app_data_dir }}
+EnvironmentFile={{ app_config_dir }}/expense.env
+ExecStart=/usr/bin/java -jar {{ app_current_link }}/app.war
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+StandardOutput=append:{{ app_log_dir }}/expense.log
+StandardError=append:{{ app_log_dir }}/expense.log
+
+[Install]
+WantedBy=multi-user.target

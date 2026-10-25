@@ -1,0 +1,29 @@
+2026-10-24 19:27:59,796 p=770 u=yashraj n=ansible | PLAY [Reset the node to a clean state] **********************************************************************************************************
+2026-10-24 19:27:59,851 p=770 u=yashraj n=ansible | TASK [Gathering Facts] **************************************************************************************************************************
+2026-10-24 19:28:01,237 p=770 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:28:01,251 p=770 u=yashraj n=ansible | TASK [Ask for confirmation] *********************************************************************************************************************
+2026-10-24 19:28:01,307 p=770 u=yashraj n=ansible | ok: [expense-node] => {
+    "changed": false,
+    "msg": "Reset confirmed"
+}
+2026-10-24 19:28:01,347 p=770 u=yashraj n=ansible | TASK [Check whether the service definition exists] **********************************************************************************************
+2026-10-24 19:28:01,842 p=770 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:28:01,856 p=770 u=yashraj n=ansible | TASK [Stop and disable the service] *************************************************************************************************************
+2026-10-24 19:28:03,576 p=770 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:28:03,590 p=770 u=yashraj n=ansible | TASK [Remove the service definition] ************************************************************************************************************
+2026-10-24 19:28:05,413 p=770 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:28:05,430 p=770 u=yashraj n=ansible | TASK [Reload systemd] ***************************************************************************************************************************
+2026-10-24 19:28:06,276 p=770 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:28:06,291 p=770 u=yashraj n=ansible | TASK [Remove the application folders] ***********************************************************************************************************
+2026-10-24 19:28:06,606 p=770 u=yashraj n=ansible | changed: [expense-node] => (item=/opt/expense)
+2026-10-24 19:28:06,848 p=770 u=yashraj n=ansible | changed: [expense-node] => (item=/etc/expense)
+2026-10-24 19:28:07,097 p=770 u=yashraj n=ansible | changed: [expense-node] => (item=/var/lib/expense)
+2026-10-24 19:28:07,356 p=770 u=yashraj n=ansible | changed: [expense-node] => (item=/var/log/expense)
+2026-10-24 19:28:07,368 p=770 u=yashraj n=ansible | TASK [Remove the application user] **************************************************************************************************************
+2026-10-24 19:28:07,900 p=770 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:28:07,912 p=770 u=yashraj n=ansible | TASK [Remove the application group] *************************************************************************************************************
+2026-10-24 19:28:08,257 p=770 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:28:08,267 p=770 u=yashraj n=ansible | TASK [Remove the Java package] ******************************************************************************************************************
+2026-10-24 19:28:12,849 p=770 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:28:12,911 p=770 u=yashraj n=ansible | PLAY RECAP **************************************************************************************************************************************
+2026-10-24 19:28:12,913 p=770 u=yashraj n=ansible | expense-node               : ok=10   changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   

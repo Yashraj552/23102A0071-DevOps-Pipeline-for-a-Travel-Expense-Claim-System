@@ -1,0 +1,57 @@
+2026-10-24 19:41:16,663 p=785 u=yashraj n=ansible | PLAY [Configure the node for the Travel Expense Claim System] ***********************************************************************************
+2026-10-24 19:41:16,711 p=785 u=yashraj n=ansible | TASK [Gathering Facts] **************************************************************************************************************************
+2026-10-24 19:41:17,979 p=785 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:41:17,992 p=785 u=yashraj n=ansible | TASK [Check that systemd is the service manager] ************************************************************************************************
+2026-10-24 19:41:18,016 p=785 u=yashraj n=ansible | ok: [expense-node] => {
+    "changed": false,
+    "msg": "systemd is running"
+}
+2026-10-24 19:41:18,029 p=785 u=yashraj n=ansible | TASK [Check that the release file exists on the control node] ***********************************************************************************
+2026-10-24 19:41:19,409 p=785 u=yashraj n=ansible | ok: [expense-node -> localhost]
+2026-10-24 19:41:19,420 p=785 u=yashraj n=ansible | TASK [Stop if the release file is missing] ******************************************************************************************************
+2026-10-24 19:41:19,467 p=785 u=yashraj n=ansible | ok: [expense-node] => {
+    "changed": false,
+    "msg": "Release file found"
+}
+2026-10-24 19:41:19,508 p=785 u=yashraj n=ansible | TASK [Install the required packages] ************************************************************************************************************
+2026-10-24 19:41:34,700 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:34,712 p=785 u=yashraj n=ansible | TASK [Create the application group] *************************************************************************************************************
+2026-10-24 19:41:35,098 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:35,108 p=785 u=yashraj n=ansible | TASK [Create the application user] **************************************************************************************************************
+2026-10-24 19:41:35,565 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:35,582 p=785 u=yashraj n=ansible | TASK [Create the application folders] ***********************************************************************************************************
+2026-10-24 19:41:35,920 p=785 u=yashraj n=ansible | changed: [expense-node] => (item=/opt/expense)
+2026-10-24 19:41:36,269 p=785 u=yashraj n=ansible | changed: [expense-node] => (item=/opt/expense/releases)
+2026-10-24 19:41:36,489 p=785 u=yashraj n=ansible | changed: [expense-node] => (item=/opt/expense/releases/1.0.0)
+2026-10-24 19:41:36,769 p=785 u=yashraj n=ansible | changed: [expense-node] => (item=/etc/expense)
+2026-10-24 19:41:37,002 p=785 u=yashraj n=ansible | changed: [expense-node] => (item=/var/lib/expense)
+2026-10-24 19:41:37,231 p=785 u=yashraj n=ansible | changed: [expense-node] => (item=/var/lib/expense/data)
+2026-10-24 19:41:37,451 p=785 u=yashraj n=ansible | changed: [expense-node] => (item=/var/lib/expense/uploads)
+2026-10-24 19:41:37,670 p=785 u=yashraj n=ansible | changed: [expense-node] => (item=/var/log/expense)
+2026-10-24 19:41:37,684 p=785 u=yashraj n=ansible | TASK [Install the environment file] *************************************************************************************************************
+2026-10-24 19:41:38,246 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:38,256 p=785 u=yashraj n=ansible | TASK [Install the systemd unit] *****************************************************************************************************************
+2026-10-24 19:41:38,742 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:38,753 p=785 u=yashraj n=ansible | TASK [Copy the release file to the node] ********************************************************************************************************
+2026-10-24 19:41:40,740 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:40,750 p=785 u=yashraj n=ansible | TASK [Point the current link to the release] ****************************************************************************************************
+2026-10-24 19:41:40,985 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:40,996 p=785 u=yashraj n=ansible | TASK [Allow the application port in the firewall] ***********************************************************************************************
+2026-10-24 19:41:41,031 p=785 u=yashraj n=ansible | skipping: [expense-node]
+2026-10-24 19:41:41,042 p=785 u=yashraj n=ansible | TASK [Apply pending service changes] ************************************************************************************************************
+2026-10-24 19:41:41,062 p=785 u=yashraj n=ansible | RUNNING HANDLER [Reload systemd] ****************************************************************************************************************
+2026-10-24 19:41:41,942 p=785 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:41:41,952 p=785 u=yashraj n=ansible | RUNNING HANDLER [Restart expense] ***************************************************************************************************************
+2026-10-24 19:41:42,402 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:42,413 p=785 u=yashraj n=ansible | TASK [Enable and start the application service] *************************************************************************************************
+2026-10-24 19:41:43,329 p=785 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:41:43,341 p=785 u=yashraj n=ansible | TASK [Wait until the application port is open] **************************************************************************************************
+2026-10-24 19:41:52,772 p=785 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:41:52,793 p=785 u=yashraj n=ansible | TASK [Call the health endpoint] *****************************************************************************************************************
+2026-10-24 19:41:53,499 p=785 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:41:53,511 p=785 u=yashraj n=ansible | TASK [Show the health status] *******************************************************************************************************************
+2026-10-24 19:41:53,558 p=785 u=yashraj n=ansible | ok: [expense-node] => {
+    "msg": "Health check: UP"
+}
+2026-10-24 19:41:53,596 p=785 u=yashraj n=ansible | PLAY RECAP **************************************************************************************************************************************
+2026-10-24 19:41:53,597 p=785 u=yashraj n=ansible | expense-node               : ok=18   changed=10   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   

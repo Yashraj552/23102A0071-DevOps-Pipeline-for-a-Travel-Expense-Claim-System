@@ -1,0 +1,42 @@
+---
+# Shows the active release, the service state and the health of the application.
+# It fails when the application is not healthy.
+- name: Check the health of the application node
+  hosts: expense_nodes
+  become: true
+
+  tasks:
+    - name: Read the active release
+      ansible.builtin.stat:
+        path: "{{ app_current_link }}"
+        follow: false
+      register: active_release
+
+    - name: Read the service state
+      ansible.builtin.command: systemctl is-active expense
+      register: service_state
+      changed_when: false
+      failed_when: false
+
+    - name: Call the health endpoint
+      ansible.builtin.uri:
+        url: "{{ health_url }}"
+        return_content: true
+      register: health
+      failed_when: false
+
+    - name: Show the result
+      ansible.builtin.debug:
+        msg:
+          - "Active release: {{ active_release.stat.lnk_target | default('none') }}"
+          - "Service state: {{ service_state.stdout }}"
+          - "Health status: {{ health.json.status | default('not reachable') }}"
+          - "HTTP status: {{ health.status | default('no answer') }}"
+
+    - name: Fail if the application is not healthy
+      ansible.builtin.assert:
+        that:
+          - service_state.stdout == 'active'
+          - health.status | default(0) == 200
+        fail_msg: "The application is not healthy"
+        success_msg: "The application is healthy"

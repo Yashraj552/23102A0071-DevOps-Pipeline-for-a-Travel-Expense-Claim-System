@@ -1,0 +1,62 @@
+---
+# Returns the node to a clean state: removes everything that site.yml creates.
+# Safety: it runs only with -e confirm_reset=yes
+- name: Reset the node to a clean state
+  hosts: expense_nodes
+  become: true
+
+  pre_tasks:
+    - name: Ask for confirmation
+      ansible.builtin.assert:
+        that: confirm_reset | default('no') == 'yes'
+        fail_msg: "This removes the application, its data, the service user and the Java package. Run again with -e confirm_reset=yes"
+        success_msg: "Reset confirmed"
+
+  tasks:
+    - name: Check whether the service definition exists
+      ansible.builtin.stat:
+        path: /etc/systemd/system/expense.service
+      register: unit_file
+
+    - name: Stop and disable the service
+      ansible.builtin.systemd:
+        name: expense
+        state: stopped
+        enabled: false
+      when: unit_file.stat.exists
+
+    - name: Remove the service definition
+      ansible.builtin.file:
+        path: /etc/systemd/system/expense.service
+        state: absent
+
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Remove the application folders
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ app_home }}"
+        - "{{ app_config_dir }}"
+        - "{{ app_data_dir }}"
+        - "{{ app_log_dir }}"
+
+    - name: Remove the application user
+      ansible.builtin.user:
+        name: "{{ app_user }}"
+        state: absent
+
+    - name: Remove the application group
+      ansible.builtin.group:
+        name: "{{ app_group }}"
+        state: absent
+
+    - name: Remove the Java package
+      ansible.builtin.apt:
+        name: "{{ java_package }}"
+        state: absent
+        purge: true
+        autoremove: true

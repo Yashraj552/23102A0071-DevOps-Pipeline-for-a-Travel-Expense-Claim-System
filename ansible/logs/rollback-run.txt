@@ -1,0 +1,62 @@
+2026-10-24 19:52:10,936 p=5771 u=yashraj n=ansible | PLAY [Deploy a release with automatic rollback] *************************************************************************************************
+2026-10-24 19:52:10,978 p=5771 u=yashraj n=ansible | TASK [Gathering Facts] **************************************************************************************************************************
+2026-10-24 19:52:12,130 p=5771 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:52:12,142 p=5771 u=yashraj n=ansible | TASK [Check that the release variables are set] *************************************************************************************************
+2026-10-24 19:52:12,172 p=5771 u=yashraj n=ansible | ok: [expense-node] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+2026-10-24 19:52:12,185 p=5771 u=yashraj n=ansible | TASK [Check that the release file exists on the control node] ***********************************************************************************
+2026-10-24 19:52:12,578 p=5771 u=yashraj n=ansible | ok: [expense-node -> localhost]
+2026-10-24 19:52:12,590 p=5771 u=yashraj n=ansible | TASK [Stop if the release file is missing] ******************************************************************************************************
+2026-10-24 19:52:12,618 p=5771 u=yashraj n=ansible | ok: [expense-node] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+2026-10-24 19:52:12,629 p=5771 u=yashraj n=ansible | TASK [Read the active release] ******************************************************************************************************************
+2026-10-24 19:52:12,915 p=5771 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:52:12,928 p=5771 u=yashraj n=ansible | TASK [Stop if there is no active release to roll back to] ***************************************************************************************
+2026-10-24 19:52:12,975 p=5771 u=yashraj n=ansible | ok: [expense-node] => {
+    "changed": false,
+    "msg": "All assertions passed"
+}
+2026-10-24 19:52:12,988 p=5771 u=yashraj n=ansible | TASK [Remember the previous release] ************************************************************************************************************
+2026-10-24 19:52:13,006 p=5771 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:52:13,020 p=5771 u=yashraj n=ansible | TASK [Show the plan] ****************************************************************************************************************************
+2026-10-24 19:52:13,042 p=5771 u=yashraj n=ansible | ok: [expense-node] => {
+    "msg": "Deploying 1.0.1-bad. Previous release: /opt/expense/releases/1.0.0"
+}
+2026-10-24 19:52:13,073 p=5771 u=yashraj n=ansible | TASK [Create the release folder] ****************************************************************************************************************
+2026-10-24 19:52:13,457 p=5771 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:52:13,469 p=5771 u=yashraj n=ansible | TASK [Copy the release file] ********************************************************************************************************************
+2026-10-24 19:52:14,132 p=5771 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:52:14,142 p=5771 u=yashraj n=ansible | TASK [Point the current link to the new release] ************************************************************************************************
+2026-10-24 19:52:14,396 p=5771 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:52:14,408 p=5771 u=yashraj n=ansible | TASK [Restart the application] ******************************************************************************************************************
+2026-10-24 19:52:15,144 p=5771 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:52:15,155 p=5771 u=yashraj n=ansible | TASK [Wait until the application port is open] **************************************************************************************************
+2026-10-24 19:53:16,109 p=5771 u=yashraj n=ansible | fatal: [expense-node]: FAILED! => {"changed": false, "elapsed": 60, "msg": "Timeout when waiting for 127.0.0.1:8085"}
+2026-10-24 19:53:16,124 p=5771 u=yashraj n=ansible | TASK [Report the failure] ***********************************************************************************************************************
+2026-10-24 19:53:16,162 p=5771 u=yashraj n=ansible | ok: [expense-node] => {
+    "msg": "Health check failed (Wait until the application port is open). Rolling back to /opt/expense/releases/1.0.0"
+}
+2026-10-24 19:53:16,183 p=5771 u=yashraj n=ansible | TASK [Point the current link back to the previous release] **************************************************************************************
+2026-10-24 19:53:16,543 p=5771 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:53:16,558 p=5771 u=yashraj n=ansible | TASK [Restart the application with the previous release] ****************************************************************************************
+2026-10-24 19:53:17,120 p=5771 u=yashraj n=ansible | changed: [expense-node]
+2026-10-24 19:53:17,137 p=5771 u=yashraj n=ansible | TASK [Wait until the application port is open again] ********************************************************************************************
+2026-10-24 19:53:27,501 p=5771 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:53:27,513 p=5771 u=yashraj n=ansible | TASK [Call the health endpoint again] ***********************************************************************************************************
+2026-10-24 19:53:28,298 p=5771 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:53:28,315 p=5771 u=yashraj n=ansible | TASK [Report the rollback] **********************************************************************************************************************
+2026-10-24 19:53:28,339 p=5771 u=yashraj n=ansible | ok: [expense-node] => {
+    "msg": "ROLLED BACK to /opt/expense/releases/1.0.0. The failed release 1.0.1-bad stays in /opt/expense/releases for analysis."
+}
+2026-10-24 19:53:28,392 p=5771 u=yashraj n=ansible | TASK [Read the active release] ******************************************************************************************************************
+2026-10-24 19:53:28,639 p=5771 u=yashraj n=ansible | ok: [expense-node]
+2026-10-24 19:53:28,650 p=5771 u=yashraj n=ansible | TASK [Show the active release] ******************************************************************************************************************
+2026-10-24 19:53:28,668 p=5771 u=yashraj n=ansible | ok: [expense-node] => {
+    "msg": "Active release: /opt/expense/releases/1.0.0"
+}
+2026-10-24 19:53:28,689 p=5771 u=yashraj n=ansible | PLAY RECAP **************************************************************************************************************************************
+2026-10-24 19:53:28,690 p=5771 u=yashraj n=ansible | expense-node               : ok=20   changed=6    unreachable=0    failed=0    skipped=0    rescued=1    ignored=0   

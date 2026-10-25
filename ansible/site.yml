@@ -1,0 +1,152 @@
+---
+- name: Configure the node for the Travel Expense Claim System
+  hosts: expense_nodes
+  become: true
+
+  pre_tasks:
+    - name: Check that systemd is the service manager
+      ansible.builtin.assert:
+        that: ansible_service_mgr == 'systemd'
+        fail_msg: "systemd is not running on this node. In WSL2 enable it in /etc/wsl.conf and run wsl --shutdown."
+        success_msg: "systemd is running"
+
+    - name: Check that the release file exists on the control node
+      ansible.builtin.stat:
+        path: "{{ app_war_src }}"
+      delegate_to: localhost
+      become: false
+      register: release_file
+
+    - name: Stop if the release file is missing
+      ansible.builtin.assert:
+        that: release_file.stat.exists
+        fail_msg: "Release file not found: {{ app_war_src }}. Build it with mvn package or change app_war_src."
+        success_msg: "Release file found"
+
+  tasks:
+    - name: Install the required packages
+      ansible.builtin.apt:
+        name: "{{ required_packages }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Create the application group
+      ansible.builtin.group:
+        name: "{{ app_group }}"
+        system: true
+        state: present
+
+    - name: Create the application user
+      ansible.builtin.user:
+        name: "{{ app_user }}"
+        group: "{{ app_group }}"
+        system: true
+        shell: /usr/sbin/nologin
+        home: "{{ app_data_dir }}"
+        create_home: false
+        comment: "Travel Expense Claim System service user"
+        state: present
+
+    - name: Create the application folders
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - { path: "{{ app_home }}", owner: root, group: root, mode: "0755" }
+        - { path: "{{ app_releases_dir }}", owner: root, group: root, mode: "0755" }
+        - { path: "{{ app_releases_dir }}/{{ app_version }}", owner: root, group: root, mode: "0755" }
+        - { path: "{{ app_config_dir }}", owner: root, group: "{{ app_group }}", mode: "0750" }
+        - { path: "{{ app_data_dir }}", owner: "{{ app_user }}", group: "{{ app_group }}", mode: "0750" }
+        - { path: "{{ app_data_dir }}/data", owner: "{{ app_user }}", group: "{{ app_group }}", mode: "0750" }
+        - { path: "{{ app_upload_dir }}", owner: "{{ app_user }}", group: "{{ app_group }}", mode: "0750" }
+        - { path: "{{ app_log_dir }}", owner: "{{ app_user }}", group: "{{ app_group }}", mode: "0750" }
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Install the environment file
+      ansible.builtin.template:
+        src: expense.env.j2
+        dest: "{{ app_config_dir }}/expense.env"
+        owner: root
+        group: "{{ app_group }}"
+        mode: "0640"
+      notify: Restart expense
+
+    - name: Install the systemd unit
+      ansible.builtin.template:
+        src: expense.service.j2
+        dest: /etc/systemd/system/expense.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Reload systemd
+        - Restart expense
+
+    - name: Copy the release file to the node
+      ansible.builtin.copy:
+        src: "{{ app_war_src }}"
+        dest: "{{ app_releases_dir }}/{{ app_version }}/app.war"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart expense
+
+    - name: Point the current link to the release
+      ansible.builtin.file:
+        src: "{{ app_releases_dir }}/{{ app_version }}"
+        dest: "{{ app_current_link }}"
+        state: link
+      notify: Restart expense
+
+    - name: Allow the application port in the firewall
+      community.general.ufw:
+        rule: allow
+        port: "{{ app_port | string }}"
+        proto: tcp
+      when: configure_firewall | bool
+
+    - name: Apply pending service changes
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start the application service
+      ansible.builtin.systemd:
+        name: expense
+        enabled: true
+        state: started
+
+    - name: Wait until the application port is open
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: "{{ app_port }}"
+        timeout: 90
+      when: not ansible_check_mode
+
+    - name: Call the health endpoint
+      ansible.builtin.uri:
+        url: "{{ health_url }}"
+        return_content: true
+      register: health
+      until: health.status == 200
+      retries: 20
+      delay: 3
+      when: not ansible_check_mode
+
+    - name: Show the health status
+      ansible.builtin.debug:
+        msg: "Health check: {{ health.json.status | default('no JSON answer') }}"
+      when: not ansible_check_mode
+
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Restart expense
+      ansible.builtin.systemd:
+        name: expense
+        state: restarted
